@@ -1,0 +1,111 @@
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+  public static void main(String[] args) throws Exception {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    String exp = br.readLine();
+    Solution ob =new Solution();
+    ob.evaluate(exp);
+  }
+}
+
+class Solution{
+  public int calculate(int val1, int val2, char operator){
+    if(operator == '*'){
+      return val1 * val2;
+    }
+    else if(operator == '+'){
+      return val1 + val2;
+    }
+    else if(operator == '-'){
+      return val1 - val2;
+    }
+    else{
+      return val1 / val2;
+    }
+  }
+    public int getpriority(char opr){
+      if(opr == '*' || opr == '/'){
+        return 2;
+      }
+      else{
+        return 1;
+      }
+    }
+    public void evaluate(String exp){
+        Stack<Integer> operands = new Stack<>();
+        Stack<Character> opr = new Stack<>();
+        Stack<String> post = new Stack<>();
+        Stack<String> pre = new Stack<>();
+        for(int i=0 ; i<exp.length() ; i++){
+          char ch = exp.charAt(i);
+          if(ch >= '0' && ch <= '9'){
+            int num = ch - '0';
+            operands.push(num);
+            post.push(ch+"");
+            pre.push(ch+"");
+          }
+          else if(ch == '('){
+            opr.push(ch);
+          }
+          else if(ch == '+' || ch == '-' || ch == '*' || ch == '/'){
+            while(opr.size() > 0 && opr.peek() != '(' && getpriority(opr.peek()) >= getpriority(ch)){
+              char operator = opr.pop();
+              int val2 = operands.pop();
+              int val1 = operands.pop();
+              int res = calculate(val1, val2, operator);
+              String postfixval2 = post.pop();
+              String postfixval1 = post.pop();
+              post.push(postfixval1 + "" + postfixval2 + "" + operator);
+              String prefixval2 = pre.pop();
+              String prefixval1 = pre.pop();
+              pre.push(operator + "" + prefixval1 + "" + prefixval2);
+              operands.push(res);
+            }
+            opr.push(ch);
+          }
+          else if(ch == ')'){
+            while(opr.peek() != '('){
+              char operator = opr.pop();
+              int val2 = operands.pop();
+              int val1 = operands.pop();
+              int res = calculate(val1, val2, operator);
+              String postfixval2 = post.pop();
+              String postfixval1 = post.pop();
+              post.push(postfixval1 + "" + postfixval2 + "" + operator);
+              String prefixval2 = pre.pop();
+              String prefixval1 = pre.pop();
+              pre.push(operator + "" + prefixval1 + "" + prefixval2);
+              operands.push(res);
+            }
+            opr.pop();
+          }
+        }
+        while(opr.size() > 0){
+        char operator = opr.pop();
+
+        int val2 = operands.pop();
+        int val1 = operands.pop();
+
+        int res = calculate(val1, val2, operator);
+
+        String postfixVal2 = post.pop();
+        String postfixVal1 = post.pop();
+        post.push(postfixVal1 + "" + postfixVal2 +""+ operator);
+
+        String prefixVal2 = pre.pop();
+        String prefixVal1 = pre.pop();
+        pre.push(operator + "" + prefixVal1 +""+ prefixVal2);
+
+        operands.push(res);
+    }
+    int res = operands.peek();
+    String postfixx = post.peek();
+    String prefixx = pre.peek();
+      System.out.println(res);
+      System.out.println(postfixx);
+      System.out.println(prefixx);
+    }
+}               
