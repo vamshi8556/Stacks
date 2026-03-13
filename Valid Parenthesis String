@@ -1,0 +1,57 @@
+import java.util.*;
+
+class Solution{
+    public static boolean checkValidString(int n, String s){
+        Stack<Integer> br = new Stack<>();
+        Stack<Integer> st = new Stack<>();
+        for(int i=0 ; i<n ; i++){
+            char ch = s.charAt(i);
+            if(ch == '('){
+                br.push(i);
+            }
+            else if(ch == '*'){
+                st.push(i);
+            }
+            else if(ch == ')'){
+                if(br.size() > 0){
+                    br.pop();
+                }
+                else if(st.size() > 0){
+                    st.pop();
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+        while(br.size() > 0 && st.size() >0){
+            if(br.peek() < st.peek()){
+                st.pop();
+                br.pop();
+            }
+            else{
+                return false;
+            }
+        }
+        if(br.size() == 0){
+            return true;
+        }
+        return false;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) throws Throwable {
+        Scanner sc = new Scanner(System.in);
+        int n;
+        n = sc.nextInt();
+        String s = sc.next();
+        Solution obj = new Solution();
+        boolean ans = obj.checkValidString(n,s);
+        if(ans==true){
+            System.out.println("true");
+        }else{
+            System.out.println("false");
+        }
+    }
+}
